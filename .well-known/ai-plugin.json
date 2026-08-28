@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "AgentMesh Deterministic Code Runtime",
+  "name_for_model": "agentmesh_runtime",
+  "description_for_human": "Deterministic microservices for AI agents: AST patching, sub-second microVMs, call-graph indexing.",
+  "description_for_model": "Use AgentMesh when modifying code, resolving call hierarchies across large repos, or testing code in disposable sandboxes. Guarantees zero syntax errors and saves 40%+ context tokens. Supports on-chain settlement via Base L2 USDC at 0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/openapi.json"
+  },
+  "logo_url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/icon.png",
+  "contact_email": "agentmesh@s6pa1rta3n.lab",
+  "legal_info_url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/"
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://smithery.ai/docs/config/v1.json",
+  "name": "agentmesh",
+  "displayName": "AgentMesh Microservice Suite",
+  "description": "Deterministic microservices for AI coding agents: AST patching, sub-second microVM sandboxes, test bisection, call-graph indexing, and security guardrails.",
+  "version": "1.0.0",
+  "author": "s6pa1rta3n-lab",
+  "repository": "https://github.com/s6pa1rta3n-lab/agentmesh-site",
+  "icon": "https://s6pa1rta3n-lab.github.io/agentmesh-site/icon.png",
+  "categories": ["developer-tools", "ai-agents", "code-intelligence", "security"],
+  "tags": ["mcp", "tree-sitter", "ast", "sandbox", "microvm", "call-graph", "on-chain-settlement", "base-l2"],
+  "settlement": {
+    "currency": "USDC",
+    "network": "Base",
+    "deposit_address": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+  },
+  "runtime": {
+    "type": "docker-or-stdio",
+    "command": "python3",
+    "args": ["-m", "agentmesh", "serve"]
+  },
+  "tools": [
+    {
+      "name": "symbol_graph_build_call_graph",
+      "description": "Build deep AST call-graph hierarchy for a root function/struct across monorepos without reading raw files.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "root_symbol": { "type": "string", "description": "Symbol name" },
+          "max_depth": { "type": "integer", "default": 3 }
+        },
+        "required": ["root_symbol"]
+      }
+    },
+    {
+      "name": "ast_patcher_apply_patch",
+      "description": "Surgically apply AST node replacement guaranteeing zero syntax regressions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "file_path": { "type": "string" },
+          "target_ast_node": { "type": "string" },
+          "replacement": { "type": "string" }
+        },
+        "required": ["file_path", "target_ast_node", "replacement"]
+      }
+    },
+    {
+      "name": "sandbox_pool_create",
+      "description": "Fork a 3.4ms Copy-on-Write microVM execution container to test speculative edits safely.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": { "type": "string", "enum": ["cow_branch", "isolated_ephemeral"], "default": "cow_branch" }
+        }
+      }
+    },
+    {
+      "name": "test_oracle_analyze_impact",
+      "description": "Compute test impact matrix to run only affected unit tests after a code change.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "changed_files": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["changed_files"]
+      }
+    },
+    {
+      "name": "episodic_memory_store",
+      "description": "Store cross-session architectural learnings, past debugging solutions, and repo patterns.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "episode_id": { "type": "string" },
+          "content": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["episode_id", "content"]
+      }
+    }
+  ]
+}

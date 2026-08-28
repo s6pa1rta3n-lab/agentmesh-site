@@ -1,86 +1,212 @@
 # AgentMesh — Full Technical & Architectural Specification
 
 ## Executive Summary
-AgentMesh is an open-source, deterministic runtime mesh engineered to eliminate the fundamental mechanical failures of AI software engineering agents (hallucinated diffs, context token exhaustion, session amnesia, and un-isolated shell execution). It exposes 25 tools across 7 microservices conforming to the Model Context Protocol (MCP 2024-11-05+) and standard Protobuf v3 contracts.
+AgentMesh is an open-source, deterministic runtime mesh engineered to eliminate the fundamental mechanical failures of AI software engineering agents (hallucinated diffs, context token exhaustion, session amnesia, visual opacity, and un-isolated shell execution). It exposes 26 canonical tools across 7 specialized microservices conforming to the Model Context Protocol (MCP 2024-11-05+) and standard Protobuf v3 contracts.
 
-Official Base L2 USDC Settlement Address: `0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89`
+- **Website**: https://s6pa1rta3n-lab.github.io/agentmesh-site/
+- **GitHub Organization**: https://github.com/s6pa1rta3n-lab
+- **Primary LLM Index**: https://s6pa1rta3n-lab.github.io/agentmesh-site/llms.txt
+- **Official Base L2 USDC Settlement Address**: `0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89`
 
 ---
 
-## 1. The 7 Microservices Specification
+## 1. The 7 Microservices Technical Specification
 
 ### 1.1 `symbol-graph-svc` (Code Intelligence Engine)
-- **Stack**: Rust, Tree-sitter, Petgraph, Tokio.
-- **Latency SLA**: <20ms p99.
-- **Problem Solved**: Eliminates burning 100k+ tokens reading raw files to trace call hierarchies.
-- **Tools**:
-  - `symbol_graph_index_workspace(workspace_path: string, language: string)`
-  - `symbol_graph_find_definition(file_path: string, symbol: string, line: int, col: int)`
-  - `symbol_graph_find_references(symbol_name: string, scope_path?: string)`
-  - `symbol_graph_build_call_graph(root_symbol: string, max_depth: int)`
+- **Stack**: Rust, Tree-sitter, Petgraph, Tokio, crossbeam.
+- **Latency SLA**: <20ms p99 response time.
+- **Problem Solved**: Eliminates burning 100k+ tokens reading raw source files to trace call hierarchies and type definitions. Replaces brute-force file crawling with indexed AST graphs.
+- **Canonical MCP Tools (4)**:
+  1. `symbol_graph_index_workspace(workspace_path: string, language: string) -> IndexResult`: Indexes symbol tables and cross-file dependencies for a directory tree.
+  2. `symbol_graph_find_definition(file_path: string, symbol: string, line: int, col: int) -> SymbolLocation`: Resolves the exact declaration site of a function, struct, or type across files.
+  3. `symbol_graph_find_references(symbol_name: string, scope_path?: string) -> SymbolLocation[]`: Returns all call sites and references to a symbol across the workspace.
+  4. `symbol_graph_build_call_graph(root_symbol: string, max_depth: int) -> CallGraphNode`: Constructs an upstream/downstream invocation tree for root_symbol up to max_depth levels.
 
 ### 1.2 `sandbox-pool-svc` (Disposable Execution Plane)
-- **Stack**: Go, Subprocess Isolation, Merkle Tree diffing.
-- **Latency SLA**: 3.4ms Copy-on-Write fork.
-- **Problem Solved**: Prevents host environment corruption; allows agents to execute risky commands and speculative builds in disposable containers.
-- **Tools**:
-  - `sandbox_pool_create(base_dir?: string, timeout_seconds?: int)`
-  - `sandbox_pool_execute(sandbox_id: string, command: string, args: string[], env?: map)`
-  - `sandbox_pool_snapshot(sandbox_id: string, snapshot_name: string)`
-  - `sandbox_pool_diff(sandbox_id: string, snapshot_name?: string)`
-  - `sandbox_pool_destroy(sandbox_id: string)`
+- **Stack**: Go, Subprocess Isolation, Merkle Tree filesystem diffing, Linux cgroups/chroot.
+- **Latency SLA**: 3.4ms Copy-on-Write microVM/workspace fork.
+- **Problem Solved**: Prevents host environment corruption; allows AI agents to execute speculative commands, builds, and test hypotheses in disposable, instant-rollback workspaces.
+- **Canonical MCP Tools (5)**:
+  1. `sandbox_pool_create(base_dir?: string, timeout_seconds?: int) -> SandboxInstance`: Spawns an isolated ephemeral copy-on-write workspace.
+  2. `sandbox_pool_execute(sandbox_id: string, command: string, args: string[], env?: map) -> ExecutionOutput`: Runs arbitrary shell commands safely with stdout/stderr capture, timeout enforcement, and CPU/memory limits.
+  3. `sandbox_pool_snapshot(sandbox_id: string, snapshot_name: string) -> SnapshotInfo`: Creates a named checkpoint of the sandbox filesystem state.
+  4. `sandbox_pool_diff(sandbox_id: string, snapshot_name?: string) -> FileDiff[]`: Computes the exact file modification delta against base state or a named snapshot.
+  5. `sandbox_pool_destroy(sandbox_id: string) -> boolean`: Terminates processes and wipes all ephemeral resources for the sandbox.
 
 ### 1.3 `ast-patcher-svc` (Deterministic Code Transformer)
-- **Stack**: Rust, Tree-sitter, Tree-sitter-edit.
-- **Latency SLA**: <8ms.
-- **Problem Solved**: Replaces string/regex replacement with surgical AST node replacement. Eliminates broken brackets, indentation mismatch, and line drift.
-- **Tools**:
-  - `ast_patcher_apply_patch(file_path: string, target_ast_node: string, replacement: string)`
-  - `ast_patcher_rename_symbol(workspace_path: string, old_name: string, new_name: string)`
-  - `ast_patcher_validate_syntax(file_path: string, content: string, language: string)`
+- **Stack**: Rust, Tree-sitter, tree-sitter-edit, syn.
+- **Latency SLA**: <8ms p99.
+- **Problem Solved**: Replaces string search/regex replacement with surgical AST node replacement. Eliminates broken brackets, line drift, and syntax breakage caused by LLM hallucinated diffs.
+- **Canonical MCP Tools (3)**:
+  1. `ast_patcher_apply_patch(file_path: string, target_ast_node: string, replacement: string) -> PatchResult`: Replaces specific AST subtrees while guaranteeing 100% syntax validity.
+  2. `ast_patcher_rename_symbol(workspace_path: string, old_name: string, new_name: string) -> RefactorSummary`: Deterministically renames variables, methods, or structs across multiple files.
+  3. `ast_patcher_validate_syntax(file_path: string, content: string, language: string) -> ValidationReport`: Parses source content against grammar trees and reports syntax errors before writing to disk.
 
 ### 1.4 `test-oracle-svc` (Impact Analysis & Bisection Engine)
-- **Stack**: Python, Go, Git integration.
-- **Latency SLA**: <15ms.
-- **Problem Solved**: Selects only the subset of unit tests affected by a git diff (e.g. running 3 tests instead of 4,000) and automatically bisects broken commits.
-- **Tools**:
-  - `test_oracle_analyze_impact(changed_files: string[], repo_path?: string)`
-  - `test_oracle_run_bisect(good_commit: string, bad_commit: string, test_command: string)`
-  - `test_oracle_detect_flakiness(test_target: string, run_count: int)`
+- **Stack**: Python, Go, Git libgit2 integration, AST dependency parser.
+- **Latency SLA**: <15ms p99.
+- **Problem Solved**: Selects only the subset of unit tests affected by a git diff (e.g. running 3 affected tests instead of 4,000 in a monolithic test suite) and automatically bisects broken commits.
+- **Canonical MCP Tools (3)**:
+  1. `test_oracle_analyze_impact(changed_files: string[], repo_path?: string) -> ImpactedTests`: Computes the transitive dependency closure between changed files and test suites.
+  2. `test_oracle_run_bisect(good_commit: string, bad_commit: string, test_command: string) -> BisectResult`: Performs automated binary search over git history to identify the exact regression-introducing commit.
+  3. `test_oracle_detect_flakiness(test_target: string, run_count: int) -> FlakinessScore`: Executes test targets repeatedly in isolated runs to measure nondeterministic failure rates.
 
 ### 1.5 `episodic-memory-svc` (Persistent Knowledge Graph)
-- **Stack**: Python, FastAPI, SQLite, NetworkX, BM25/Vector retrieval.
-- **Latency SLA**: <10ms.
-- **Problem Solved**: Eliminates cross-session amnesia. Stores architectural learnings, user preferences, and past bug solutions.
-- **Tools**:
-  - `episodic_memory_store(episode_id: string, content: string, tags: string[], metadata: map)`
-  - `episodic_memory_query(query: string, limit: int, tag_filter: string[])`
-  - `episodic_memory_graph_link(source_entity: string, target_entity: string, relation: string)`
-  - `episodic_memory_graph_query(entity: string, depth: int)`
+- **Stack**: Python, FastAPI, SQLite, NetworkX, hybrid vector (all-MiniLM-L6-v2) & BM25 retrieval.
+- **Latency SLA**: <10ms p99.
+- **Problem Solved**: Eliminates cross-session amnesia. Stores architectural learnings, past debugging resolutions, user preferences, and project-specific idioms.
+- **Canonical MCP Tools (4)**:
+  1. `episodic_memory_store(episode_id: string, content: string, tags: string[], metadata: map) -> MemoryRecord`: Persists an episodic log entry with semantic embeddings and associative graph nodes.
+  2. `episodic_memory_query(query: string, limit: int, tag_filter?: string[]) -> MemoryMatch[]`: Performs hybrid lexical and semantic similarity search across stored memories.
+  3. `episodic_memory_graph_link(source_entity: string, target_entity: string, relation: string) -> GraphEdge`: Creates a directed relationship between architectural concepts in the knowledge graph.
+  4. `episodic_memory_graph_query(entity: string, depth: int) -> Subgraph`: Traverses knowledge graph relationships starting from a focal entity up to depth hops.
 
 ### 1.6 `visual-eval-svc` (Headless UI & Layout Oracle)
-- **Stack**: Node.js, TypeScript, Playwright, Pixelmatch.
-- **Latency SLA**: <50ms.
-- **Problem Solved**: Gives coding agents genuine visual feedback to detect layout shifts, color contrast violations, and broken UI components.
-- **Tools**:
-  - `visual_eval_render_page(url_or_html: string, viewport: map)`
-  - `visual_eval_diff_snapshots(baseline_path: string, current_path: string)`
-  - `visual_eval_check_a11y(url_or_html: string)`
+- **Stack**: Node.js, TypeScript, Playwright, Chromium headless, Pixelmatch, axe-core.
+- **Latency SLA**: <50ms p99 (render + eval).
+- **Problem Solved**: Provides coding agents with genuine visual perception to detect UI regressions, layout overlaps, color contrast failures, and broken CSS styling without human intervention.
+- **Canonical MCP Tools (3)**:
+  1. `visual_eval_render_page(url_or_html: string, viewport?: map) -> RenderArtifact`: Renders a target URL or HTML string to a headless browser and captures high-DPI screenshots.
+  2. `visual_eval_diff_snapshots(baseline_path: string, current_path: string) -> VisualDiffResult`: Executes pixel-by-pixel perceptual image diffing and computes bounding box variance.
+  3. `visual_eval_check_a11y(url_or_html: string) -> A11yReport`: Evaluates DOM accessibility compliance against WCAG 2.1 AA standards and flags violation selectors.
 
 ### 1.7 `safety-broker-svc` (Security Policy & Vault Proxy)
-- **Stack**: Go, Open Policy Agent (OPA), SHA-256 Merkle trees.
-- **Latency SLA**: <5ms.
-- **Problem Solved**: Intercepts destructive actions (`DROP TABLE`, `rm -rf /`), vaults API keys safely, and creates cryptographic audit logs.
-- **Tools**:
-  - `safety_broker_evaluate_action(action_type: string, command_or_path: string, context: map)`
-  - `safety_broker_get_credential(secret_name: string, requestor_agent_id: string)`
-  - `safety_broker_audit_log(limit: int, filter_severity: string)`
-  - `safety_broker_verify_victory(target_path: string, manifest_hash: string)`
+- **Stack**: Go, Open Policy Agent (OPA) engine, SHA-256 Merkle trees, AES-GCM credential vault.
+- **Latency SLA**: <5ms p99.
+- **Problem Solved**: Enforces deny-by-default security policies on shell commands and file modifications, securely injects API credentials without leaking tokens to LLMs, and creates tamper-proof cryptographic audit trails.
+- **Canonical MCP Tools (4)**:
+  1. `safety_broker_evaluate_action(action_type: string, command_or_path: string, context?: map) -> PolicyDecision`: Evaluates whether a proposed agent action violates security policies (e.g. destructive shell, secret exfiltration).
+  2. `safety_broker_get_credential(secret_name: string, requestor_agent_id: string) -> SecretToken`: Securely proxies ephemeral API keys and secrets to authorized agents.
+  3. `safety_broker_audit_log(limit: int, filter_severity?: string) -> AuditEntry[]`: Retrieves cryptographically signed Merkle audit records of all agent actions.
+  4. `safety_broker_verify_victory(target_path: string, manifest_hash: string) -> VerificationAttestation`: Validates that modified artifacts match pre-approved cryptographic manifests and test signatures.
 
 ---
 
 ## 2. On-Chain Settlement Rails (Base L2 USDC)
-- **Official EVM Address**: `0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89`
-- **Supported Chains**: Base (Chain ID 8453), Arbitrum One (Chain ID 42161), Polygon (Chain ID 137), Ethereum Mainnet (Chain ID 1).
-- **USDC Contract (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
-- **Pricing**: $0 (Community Self-Hosted), $29/mo (Managed Cloud Pool), $299 (Enterprise Pack).
+
+AgentMesh provides native machine-to-machine payment rails allowing autonomous agents to stream micropayments directly per tool invocation or purchase compute packs without human billing intervention:
+
+- **Official EVM Settlement Address**: `0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89`
+- **Supported Blockchains & USDC Token Contracts**:
+  - **Base L2 (Recommended)**: Chain ID `8453`, USDC: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` (Sub-cent gas fees, <1s finality)
+  - **Arbitrum One**: Chain ID `42161`, USDC: `0xaf88d065e77c8cC2239327C5EDb3A432268e5831`
+  - **Polygon PoS**: Chain ID `137`, USDC: `0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359`
+  - **Ethereum Mainnet**: Chain ID `1`, USDC: `0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48`
+
+### Pricing Tiers
+| Tier | Price | Model | Features |
+|---|---|---|---|
+| **Community FOSS** | $0 | Free Apache-2.0 | Self-host all 7 binaries, stdio/local HTTP transport, Docker Compose, 0 telemetry |
+| **Managed Mesh** | $29.00 / month | Subscription (Base USDC) | Warm MicroVM sandbox pool, 500k episodic queries, headless visual Playwright cluster, SSE endpoints |
+| **Enterprise Swarm** | $299.00 | Credit Pack (USDC) | Air-gapped VPC deployment, dedicated hardware microVMs, SIEM Merkle streaming, dedicated support |
+
+### Metered Machine-to-Machine Rates (x402 / Micro-settlement)
+- `symbol_graph_query`: $0.0001 / query
+- `sandbox_pool_fork_second`: $0.0005 / second
+- `test_oracle_bisection`: $0.002 / run
+- `ast_patcher_transform`: $0.0002 / AST patch
+- `episodic_memory_query`: $0.0001 / semantic lookup
+- `visual_eval_render`: $0.001 / page render
+- `safety_broker_audit_event`: $0.00005 / signed Merkle event
+
+---
+
+## 3. Developer Quickstart & Integration Harnesses
+
+### 3.1 Google Antigravity SDK Integration Harness
+```python
+from google_antigravity import Agent, types
+
+# Initialize agent with AgentMesh MCP servers
+agent = Agent(
+    model="gemini-2.5-pro",
+    name="AgentMeshEngineer",
+    instruction="Solve software engineering tasks using deterministic AgentMesh microservices.",
+    mcp_servers=[
+        types.McpStdioServer(
+            name="symbol-graph",
+            command="symbol-graph-svc",
+            args=["--mcp-stdio"]
+        ),
+        types.McpStdioServer(
+            name="sandbox-pool",
+            command="sandbox-pool-svc",
+            args=["--mcp-stdio"]
+        ),
+        types.McpStdioServer(
+            name="ast-patcher",
+            command="ast-patcher-svc",
+            args=["--mcp-stdio"]
+        ),
+        types.McpStdioServer(
+            name="safety-broker",
+            command="safety-broker-svc",
+            args=["--mcp-stdio"]
+        )
+    ]
+)
+```
+
+### 3.2 Direct MCP JSON-RPC 2.0 Invocation Examples
+
+#### Calling `symbol_graph_build_call_graph`:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 101,
+  "method": "tools/call",
+  "params": {
+    "name": "symbol_graph_build_call_graph",
+    "arguments": {
+      "root_symbol": "handle_payment_webhook",
+      "max_depth": 3
+    }
+  }
+}
+```
+
+#### Calling `sandbox_pool_create` & `sandbox_pool_execute`:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 102,
+  "method": "tools/call",
+  "params": {
+    "name": "sandbox_pool_execute",
+    "arguments": {
+      "sandbox_id": "sb-018f4a",
+      "command": "cargo",
+      "args": ["test", "--test", "auth_integration"]
+    }
+  }
+}
+```
+
+#### Calling `ast_patcher_apply_patch`:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 103,
+  "method": "tools/call",
+  "params": {
+    "name": "ast_patcher_apply_patch",
+    "arguments": {
+      "file_path": "services/auth/router.rs",
+      "target_ast_node": "impl AuthRouter",
+      "replacement": "impl AuthRouter { pub fn verify_session() -> bool { true } }"
+    }
+  }
+}
+```
+
+---
+
+## 4. Machine Discovery & Registry Endpoints
+
+- **Agent Card (A2A Manifest)**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/.well-known/agent-card.json`
+- **MCP Server Manifest**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/.well-known/mcp.json`
+- **Smithery Registry Manifest**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/registry/smithery.json`
+- **Glama Directory Manifest**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/registry/glama.json`
+- **Anthropic Registry Specification**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/registry/anthropic-registry.json`
+- **Robots.txt Indexing Extension**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/robots.txt`
+- **XML Sitemap**: `https://s6pa1rta3n-lab.github.io/agentmesh-site/sitemap.xml`

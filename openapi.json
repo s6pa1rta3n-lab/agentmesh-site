@@ -1,0 +1,101 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AgentMesh Autonomous Tool API",
+    "version": "1.0.0",
+    "description": "Deterministic microservices for autonomous coding agents. Machine settlement via Base L2 USDC (0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89)."
+  },
+  "servers": [
+    { "url": "https://api.agentmesh.network/v1" },
+    { "url": "http://localhost:8080/v1" }
+  ],
+  "paths": {
+    "/symbol-graph/call-graph": {
+      "post": {
+        "operationId": "buildCallGraph",
+        "summary": "Build deep AST call-graph without consuming tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "root_symbol": { "type": "string" },
+                  "max_depth": { "type": "integer", "default": 3 }
+                },
+                "required": ["root_symbol"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Call graph nodes and edges",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "root": { "type": "string" },
+                    "callers": { "type": "array", "items": { "type": "string" } },
+                    "callees": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          },
+          "402": { "description": "Payment Required (Settle on Base USDC)" }
+        }
+      }
+    },
+    "/ast-patcher/apply": {
+      "post": {
+        "operationId": "applyAstPatch",
+        "summary": "Surgically apply AST node replacement guaranteeing zero syntax regressions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file_path": { "type": "string" },
+                  "target_ast_node": { "type": "string" },
+                  "replacement": { "type": "string" }
+                },
+                "required": ["file_path", "target_ast_node", "replacement"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Patch applied cleanly" },
+          "402": { "description": "Payment Required (Settle on Base USDC)" }
+        }
+      }
+    },
+    "/sandbox-pool/fork": {
+      "post": {
+        "operationId": "forkMicrovm",
+        "summary": "Fork a 3.4ms Copy-on-Write microVM execution container",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mode": { "type": "string", "default": "cow_branch" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Sandbox container ready" },
+          "402": { "description": "Payment Required" }
+        }
+      }
+    }
+  }
+}

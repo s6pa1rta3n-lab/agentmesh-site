@@ -5,6 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgentMesh — Deterministic Runtime Primitives for AI Software Agents</title>
   <meta name="description" content="7 standalone Rust & Go microservices. AST code graphs, 3ms microVM forks, syntax-preserving patchers, and cryptographic audit logs for AI coding agents.">
+  <link rel="canonical" href="https://s6pa1rta3n-lab.github.io/agentmesh-site/">
+
+  <!-- Open Graph / Facebook Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AgentMesh">
+  <meta property="og:title" content="AgentMesh — Deterministic Runtime Primitives for AI Software Agents">
+  <meta property="og:description" content="7 standalone Rust & Go microservices. AST code graphs, 3ms microVM forks, syntax-preserving patchers, and cryptographic audit logs for AI coding agents.">
+  <meta property="og:url" content="https://s6pa1rta3n-lab.github.io/agentmesh-site/">
+  <meta property="og:image" content="https://s6pa1rta3n-lab.github.io/agentmesh-site/og-preview.png">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@agentmesh_net">
+  <meta name="twitter:creator" content="@agentmesh_net">
+  <meta name="twitter:title" content="AgentMesh — Deterministic Runtime Primitives for AI Software Agents">
+  <meta name="twitter:description" content="7 standalone Rust & Go microservices. AST code graphs, 3ms microVM forks, syntax-preserving patchers, and cryptographic audit logs for AI coding agents.">
+  <meta name="twitter:image" content="https://s6pa1rta3n-lab.github.io/agentmesh-site/og-preview.png">
+
+  <!-- A-SEO & Machine Discovery Link Tags -->
+  <link rel="alternate" type="text/plain" href="llms.txt" title="AgentMesh LLM Context">
+  <link rel="alternate" type="text/plain" href="llms-full.txt" title="AgentMesh Full Technical Specification">
+  <link rel="agent-card" type="application/json" href=".well-known/agent-card.json">
+  <link rel="mcp-manifest" type="application/json" href=".well-known/mcp.json">
+
+  <!-- Schema.org JSON-LD Structured Data Graph -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#software",
+        "name": "AgentMesh",
+        "description": "7 standalone Rust & Go microservices. AST code graphs, 3ms microVM forks, syntax-preserving patchers, and cryptographic audit logs for AI coding agents.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "POSIX, Linux, macOS, Windows",
+        "softwareRequirements": "Model Context Protocol (MCP 2024-11-05+)",
+        "softwareVersion": "1.0.0",
+        "url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/",
+        "author": {
+          "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#organization"
+        },
+        "publisher": {
+          "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#organization"
+        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Community FOSS",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "Self-host all 7 binaries on your own hardware under Apache-2.0 License.",
+            "priceSpecification": {
+              "@type": "UnitPriceSpecification",
+              "price": "0",
+              "priceCurrency": "USD",
+              "unitText": "free"
+            }
+          },
+          {
+            "@type": "Offer",
+            "name": "Managed Mesh",
+            "price": "29.00",
+            "priceCurrency": "USD",
+            "billingIncrement": "monthly",
+            "description": "Hosted warm MicroVM pool, 500k episodic vector queries, headless visual Playwright cluster.",
+            "priceSpecification": {
+              "@type": "UnitPriceSpecification",
+              "price": "29.00",
+              "priceCurrency": "USD",
+              "unitText": "month"
+            }
+          },
+          {
+            "@type": "Offer",
+            "name": "Enterprise Swarm Pack",
+            "price": "299.00",
+            "priceCurrency": "USD",
+            "description": "Air-gapped VPC deployment, dedicated hardware MicroVMs, SIEM Merkle audit log streaming.",
+            "priceSpecification": {
+              "@type": "UnitPriceSpecification",
+              "price": "299.00",
+              "priceCurrency": "USD",
+              "unitText": "pack"
+            }
+          }
+        ],
+        "paymentAccepted": "USDC on Base L2, Arbitrum, Polygon, Ethereum",
+        "recipientAddress": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89",
+        "depositAddress": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#organization",
+        "name": "AgentMesh Network",
+        "url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/",
+        "logo": "https://s6pa1rta3n-lab.github.io/agentmesh-site/logo.png",
+        "sameAs": [
+          "https://github.com/s6pa1rta3n-lab",
+          "https://github.com/s6pa1rta3n-lab/agentmesh-site",
+          "https://basescan.org/address/0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#website",
+        "name": "AgentMesh",
+        "url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/",
+        "description": "The Microservice Runtime Mesh for AI Coding Agents.",
+        "publisher": {
+          "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#organization"
+        }
+      },
+      {
+        "@type": "TechArticle",
+        "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#techarticle",
+        "headline": "AgentMesh 7-Service Architecture & Deterministic MCP Runtime Specification",
+        "description": "Technical specification, AST benchmarks, MicroVM sandboxes, and MCP tool schemas across the 7 AgentMesh microservices.",
+        "url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/llms-full.txt",
+        "author": {
+          "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#organization"
+        },
+        "publisher": {
+          "@id": "https://s6pa1rta3n-lab.github.io/agentmesh-site/#organization"
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -392,6 +522,7 @@
         <a href="#problem">The Problem</a>
         <a href="#services">Architecture</a>
         <a href="#pricing">Settlement</a>
+        <a href="llms.txt" class="mono" style="color: var(--accent);">llms.txt</a>
         <a href="https://github.com/s6pa1rta3n-lab" target="_blank">GitHub</a>
       </div>
       <button onclick="openModal(29, 'Managed Mesh')" class="btn-usdc mono">
@@ -644,6 +775,10 @@
     <div class="container footer-inner mono">
       <div>&copy; 2026 AgentMesh Network • Settle on Base L2: <code>0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89</code></div>
       <div>
+        <a href="llms.txt" style="color: var(--text-muted); text-decoration: none;">llms.txt</a> • 
+        <a href="llms-full.txt" style="color: var(--text-muted); text-decoration: none;">llms-full.txt</a> • 
+        <a href=".well-known/agent-card.json" style="color: var(--text-muted); text-decoration: none;">agent-card.json</a> • 
+        <a href=".well-known/mcp.json" style="color: var(--text-muted); text-decoration: none;">mcp.json</a> • 
         <a href="https://github.com/s6pa1rta3n-lab" target="_blank" style="color: var(--text-muted); text-decoration: none;">GitHub</a> • 
         <a href="https://basescan.org/address/0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89" target="_blank" style="color: var(--text-muted); text-decoration: none;">Basescan</a>
       </div>
