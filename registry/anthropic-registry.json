@@ -1,0 +1,97 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/registry/v1/entry.json",
+  "id": "agentmesh-suite",
+  "name": "AgentMesh Suite",
+  "description": "High-performance microservice runtime mesh providing AST code intelligence, copy-on-write sandboxes, deterministic code patching, test impact bisection, episodic memory, visual evaluation, and policy enforcement for Claude and autonomous coding agents.",
+  "vendor": {
+    "name": "AgentMesh",
+    "url": "https://s6pa1rta3n-lab.github.io/agentmesh-site/",
+    "support": "https://github.com/s6pa1rta3n-lab/agentmesh-site/issues"
+  },
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "protocols": ["2024-11-05"],
+  "transports": ["stdio", "sse", "http"],
+  "servers": {
+    "symbol-graph": {
+      "command": "symbol-graph-svc",
+      "args": ["--mcp-stdio"],
+      "description": "High-throughput AST symbol indexing, definition lookup, and cross-file call graphs.",
+      "tools": [
+        "symbol_graph_index_workspace",
+        "symbol_graph_find_definition",
+        "symbol_graph_find_references",
+        "symbol_graph_build_call_graph"
+      ]
+    },
+    "sandbox-pool": {
+      "command": "sandbox-pool-svc",
+      "args": ["--mcp-stdio"],
+      "description": "Ephemeral copy-on-write workspace scratchpads, sub-second execution, snapshots & diffs.",
+      "tools": [
+        "sandbox_pool_create",
+        "sandbox_pool_execute",
+        "sandbox_pool_snapshot",
+        "sandbox_pool_diff",
+        "sandbox_pool_destroy"
+      ]
+    },
+    "test-oracle": {
+      "command": "python3",
+      "args": ["-m", "test_oracle.mcp_server"],
+      "description": "Dynamic test impact analysis and automated git commit bisection.",
+      "tools": [
+        "test_oracle_analyze_impact",
+        "test_oracle_run_bisect",
+        "test_oracle_detect_flakiness"
+      ]
+    },
+    "ast-patcher": {
+      "command": "ast-patcher-svc",
+      "args": ["--mcp-stdio"],
+      "description": "Deterministic AST-aware code transformation, refactoring, and atomic rollback.",
+      "tools": [
+        "ast_patcher_apply_patch",
+        "ast_patcher_rename_symbol",
+        "ast_patcher_validate_syntax"
+      ]
+    },
+    "episodic-memory": {
+      "command": "python3",
+      "args": ["-m", "episodic_memory.mcp_server"],
+      "description": "Semantic knowledge graph, episodic experience recording, and cross-session memory.",
+      "tools": [
+        "episodic_memory_store",
+        "episodic_memory_query",
+        "episodic_memory_graph_link",
+        "episodic_memory_graph_query"
+      ]
+    },
+    "visual-eval": {
+      "command": "node",
+      "args": ["dist/mcp-server.js"],
+      "description": "Headless browser DOM layout inspection, visual regression pixel-diffing & a11y audits.",
+      "tools": [
+        "visual_eval_render_page",
+        "visual_eval_diff_snapshots",
+        "visual_eval_check_a11y"
+      ]
+    },
+    "safety-broker": {
+      "command": "safety-broker-svc",
+      "args": ["--mcp-stdio"],
+      "description": "Deny-by-default policy enforcement, secret vault proxying, and Merkle audit logs.",
+      "tools": [
+        "safety_broker_evaluate_action",
+        "safety_broker_get_credential",
+        "safety_broker_audit_log",
+        "safety_broker_verify_victory"
+      ]
+    }
+  },
+  "settlement": {
+    "network": "Base L2 (EVM Chain ID 8453)",
+    "token": "USDC (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)",
+    "depositAddress": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+  }
+}

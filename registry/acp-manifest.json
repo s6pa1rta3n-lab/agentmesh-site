@@ -1,0 +1,30 @@
+{
+  "protocol": "ERC-8183-ACP",
+  "version": "1.0.0",
+  "agent_id": "agentmesh-runtime",
+  "name": "AgentMesh Deterministic Code Engine",
+  "description": "Sub-agent service provider offering AST transformations, microVM executions, and code intelligence for autonomous agent swarms.",
+  "service_offerings": [
+    {
+      "job_type": "ast_patch_repair",
+      "price_usdc": "0.0002",
+      "sla_seconds": 1,
+      "settlement_address": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89",
+      "chain_id": 8453
+    },
+    {
+      "job_type": "call_graph_resolution",
+      "price_usdc": "0.0001",
+      "sla_seconds": 1,
+      "settlement_address": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89",
+      "chain_id": 8453
+    },
+    {
+      "job_type": "microvm_sandbox_exec",
+      "price_usdc": "0.0005",
+      "sla_seconds": 5,
+      "settlement_address": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89",
+      "chain_id": 8453
+    }
+  ]
+}

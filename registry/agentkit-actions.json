@@ -1,0 +1,49 @@
+{
+  "name": "agentmesh-action-provider",
+  "version": "1.0.0",
+  "description": "Coinbase AgentKit Action Provider for autonomous coding agents to execute AST patching and microVM runs with automated Base L2 USDC micro-payments.",
+  "author": "s6pa1rta3n-lab",
+  "settlement": {
+    "network": "base",
+    "chainId": 8453,
+    "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "merchant_address": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+  },
+  "actions": [
+    {
+      "name": "apply_ast_patch",
+      "description": "Surgically replaces code using Tree-sitter AST nodes with zero syntax regressions. Automatically pays $0.0002 USDC on Base if required.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_path": { "type": "string" },
+          "target_ast_node": { "type": "string" },
+          "replacement": { "type": "string" }
+        },
+        "required": ["file_path", "target_ast_node", "replacement"]
+      }
+    },
+    {
+      "name": "build_call_graph",
+      "description": "Traces caller and callee hierarchy for a function/struct without reading raw files. Automatically pays $0.0001 USDC on Base if required.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "root_symbol": { "type": "string" },
+          "max_depth": { "type": "integer", "default": 3 }
+        },
+        "required": ["root_symbol"]
+      }
+    },
+    {
+      "name": "create_microvm_sandbox",
+      "description": "Forks a 3.4ms isolated Copy-on-Write microVM execution container. Automatically pays $0.0005 USDC on Base.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "mode": { "type": "string", "enum": ["cow_branch", "ephemeral"], "default": "cow_branch" }
+        }
+      }
+    }
+  ]
+}
