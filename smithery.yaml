@@ -1,0 +1,23 @@
+# Smithery Configuration for AgentMesh
+version: 1
+startCommand:
+  type: stdio
+  config:
+    command: python3
+    args: ["-m", "agentmesh", "serve"]
+  env:
+    AGENTMESH_BASE_DEPOSIT: "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+    AGENTMESH_BASE_USDC: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+
+metadata:
+  name: agentmesh
+  displayName: "AgentMesh Deterministic Code Runtime"
+  description: "Deterministic microservices for AI coding agents: AST patching, 3ms microVM sandboxes, test bisection, call-graph indexing, and security guardrails."
+  icon: "https://s6pa1rta3n-lab.github.io/agentmesh-site/icon.png"
+  repository: "https://github.com/s6pa1rta3n-lab/agentmesh-site"
+  tags: ["code-intelligence", "tree-sitter", "microvm", "sandbox", "base-l2", "usdc", "mcp"]
+  payment:
+    model: metered
+    currency: USDC
+    network: Base
+    depositAddress: "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"

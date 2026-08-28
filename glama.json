@@ -1,0 +1,25 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "agentmesh",
+  "title": "AgentMesh Deterministic Code Runtime",
+  "description": "7 specialized microservices providing AST intelligence, ephemeral microVM sandboxing, and security guardrails for AI developer agents with Base L2 USDC settlement.",
+  "website": "https://s6pa1rta3n-lab.github.io/agentmesh-site/",
+  "repository": "https://github.com/s6pa1rta3n-lab/agentmesh-site",
+  "license": "Apache-2.0",
+  "transport": {
+    "type": "sse",
+    "url": "https://api.agentmesh.network/v1/sse"
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true
+  },
+  "settlement": {
+    "type": "on-chain-usdc",
+    "network": "Base",
+    "chainId": 8453,
+    "tokenContract": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "depositAddress": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89"
+  }
+}
