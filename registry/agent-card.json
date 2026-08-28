@@ -1,0 +1,62 @@
+{
+  "$schema": "https://standards.agentmesh.network/v1/agent-card.json",
+  "name": "AgentMesh",
+  "version": "1.0.0",
+  "category": "infrastructure-mesh",
+  "description": "Deterministic microservice infrastructure plane for autonomous coding agents.",
+  "endpoint": "https://api.agentmesh.network/v1",
+  "transport_protocols": ["mcp-stdio", "mcp-http-sse", "grpc"],
+  "pricing": {
+    "model": "metered",
+    "currency": "USD",
+    "settlement_methods": ["usdc_evm", "x402_lightning", "stripe_api_key"],
+    "settlement_deposit_address": "0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89",
+    "supported_evm_networks": [
+      { "name": "Base", "chainId": 8453, "usdcContract": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" },
+      { "name": "Arbitrum One", "chainId": 42161, "usdcContract": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831" },
+      { "name": "Polygon", "chainId": 137, "usdcContract": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359" },
+      { "name": "Ethereum Mainnet", "chainId": 1, "usdcContract": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" }
+    ],
+    "rates": {
+      "symbol_graph_query": 0.0001,
+      "sandbox_pool_fork_second": 0.0005,
+      "test_oracle_bisection": 0.002,
+      "ast_patcher_transform": 0.0002,
+      "episodic_memory_query": 0.0001,
+      "visual_eval_render": 0.001,
+      "safety_broker_audit_event": 0.00005
+    }
+  },
+  "capabilities": [
+    {
+      "id": "code_intelligence",
+      "tools": ["symbol_graph_index_workspace", "symbol_graph_find_definition", "symbol_graph_build_call_graph"],
+      "latency_p99_ms": 25
+    },
+    {
+      "id": "ephemeral_sandboxing",
+      "tools": ["sandbox_pool_create", "sandbox_pool_execute", "sandbox_pool_snapshot", "sandbox_pool_diff"],
+      "fork_latency_ms": 4.2
+    },
+    {
+      "id": "syntax_safe_patching",
+      "tools": ["ast_patcher_apply_patch", "ast_patcher_rename_symbol"],
+      "syntax_guarantee": "100% Tree-sitter validated"
+    },
+    {
+      "id": "long_term_memory",
+      "tools": ["episodic_memory_store", "episodic_memory_query", "episodic_memory_graph_query"],
+      "retrieval": "hybrid_vector_graph"
+    },
+    {
+      "id": "visual_verification",
+      "tools": ["visual_eval_render_page", "visual_eval_diff_snapshots", "visual_eval_check_a11y"],
+      "engine": "chromium_headless"
+    },
+    {
+      "id": "governance_and_safety",
+      "tools": ["safety_broker_evaluate_action", "safety_broker_get_credential", "safety_broker_verify_victory"],
+      "audit_trail": "sha256_merkle_tree"
+    }
+  ]
+}

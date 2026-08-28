@@ -1,0 +1,86 @@
+# AgentMesh — Full Technical & Architectural Specification
+
+## Executive Summary
+AgentMesh is an open-source, deterministic runtime mesh engineered to eliminate the fundamental mechanical failures of AI software engineering agents (hallucinated diffs, context token exhaustion, session amnesia, and un-isolated shell execution). It exposes 25 tools across 7 microservices conforming to the Model Context Protocol (MCP 2024-11-05+) and standard Protobuf v3 contracts.
+
+Official Base L2 USDC Settlement Address: `0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89`
+
+---
+
+## 1. The 7 Microservices Specification
+
+### 1.1 `symbol-graph-svc` (Code Intelligence Engine)
+- **Stack**: Rust, Tree-sitter, Petgraph, Tokio.
+- **Latency SLA**: <20ms p99.
+- **Problem Solved**: Eliminates burning 100k+ tokens reading raw files to trace call hierarchies.
+- **Tools**:
+  - `symbol_graph_index_workspace(workspace_path: string, language: string)`
+  - `symbol_graph_find_definition(file_path: string, symbol: string, line: int, col: int)`
+  - `symbol_graph_find_references(symbol_name: string, scope_path?: string)`
+  - `symbol_graph_build_call_graph(root_symbol: string, max_depth: int)`
+
+### 1.2 `sandbox-pool-svc` (Disposable Execution Plane)
+- **Stack**: Go, Subprocess Isolation, Merkle Tree diffing.
+- **Latency SLA**: 3.4ms Copy-on-Write fork.
+- **Problem Solved**: Prevents host environment corruption; allows agents to execute risky commands and speculative builds in disposable containers.
+- **Tools**:
+  - `sandbox_pool_create(base_dir?: string, timeout_seconds?: int)`
+  - `sandbox_pool_execute(sandbox_id: string, command: string, args: string[], env?: map)`
+  - `sandbox_pool_snapshot(sandbox_id: string, snapshot_name: string)`
+  - `sandbox_pool_diff(sandbox_id: string, snapshot_name?: string)`
+  - `sandbox_pool_destroy(sandbox_id: string)`
+
+### 1.3 `ast-patcher-svc` (Deterministic Code Transformer)
+- **Stack**: Rust, Tree-sitter, Tree-sitter-edit.
+- **Latency SLA**: <8ms.
+- **Problem Solved**: Replaces string/regex replacement with surgical AST node replacement. Eliminates broken brackets, indentation mismatch, and line drift.
+- **Tools**:
+  - `ast_patcher_apply_patch(file_path: string, target_ast_node: string, replacement: string)`
+  - `ast_patcher_rename_symbol(workspace_path: string, old_name: string, new_name: string)`
+  - `ast_patcher_validate_syntax(file_path: string, content: string, language: string)`
+
+### 1.4 `test-oracle-svc` (Impact Analysis & Bisection Engine)
+- **Stack**: Python, Go, Git integration.
+- **Latency SLA**: <15ms.
+- **Problem Solved**: Selects only the subset of unit tests affected by a git diff (e.g. running 3 tests instead of 4,000) and automatically bisects broken commits.
+- **Tools**:
+  - `test_oracle_analyze_impact(changed_files: string[], repo_path?: string)`
+  - `test_oracle_run_bisect(good_commit: string, bad_commit: string, test_command: string)`
+  - `test_oracle_detect_flakiness(test_target: string, run_count: int)`
+
+### 1.5 `episodic-memory-svc` (Persistent Knowledge Graph)
+- **Stack**: Python, FastAPI, SQLite, NetworkX, BM25/Vector retrieval.
+- **Latency SLA**: <10ms.
+- **Problem Solved**: Eliminates cross-session amnesia. Stores architectural learnings, user preferences, and past bug solutions.
+- **Tools**:
+  - `episodic_memory_store(episode_id: string, content: string, tags: string[], metadata: map)`
+  - `episodic_memory_query(query: string, limit: int, tag_filter: string[])`
+  - `episodic_memory_graph_link(source_entity: string, target_entity: string, relation: string)`
+  - `episodic_memory_graph_query(entity: string, depth: int)`
+
+### 1.6 `visual-eval-svc` (Headless UI & Layout Oracle)
+- **Stack**: Node.js, TypeScript, Playwright, Pixelmatch.
+- **Latency SLA**: <50ms.
+- **Problem Solved**: Gives coding agents genuine visual feedback to detect layout shifts, color contrast violations, and broken UI components.
+- **Tools**:
+  - `visual_eval_render_page(url_or_html: string, viewport: map)`
+  - `visual_eval_diff_snapshots(baseline_path: string, current_path: string)`
+  - `visual_eval_check_a11y(url_or_html: string)`
+
+### 1.7 `safety-broker-svc` (Security Policy & Vault Proxy)
+- **Stack**: Go, Open Policy Agent (OPA), SHA-256 Merkle trees.
+- **Latency SLA**: <5ms.
+- **Problem Solved**: Intercepts destructive actions (`DROP TABLE`, `rm -rf /`), vaults API keys safely, and creates cryptographic audit logs.
+- **Tools**:
+  - `safety_broker_evaluate_action(action_type: string, command_or_path: string, context: map)`
+  - `safety_broker_get_credential(secret_name: string, requestor_agent_id: string)`
+  - `safety_broker_audit_log(limit: int, filter_severity: string)`
+  - `safety_broker_verify_victory(target_path: string, manifest_hash: string)`
+
+---
+
+## 2. On-Chain Settlement Rails (Base L2 USDC)
+- **Official EVM Address**: `0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89`
+- **Supported Chains**: Base (Chain ID 8453), Arbitrum One (Chain ID 42161), Polygon (Chain ID 137), Ethereum Mainnet (Chain ID 1).
+- **USDC Contract (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
+- **Pricing**: $0 (Community Self-Hosted), $29/mo (Managed Cloud Pool), $299 (Enterprise Pack).

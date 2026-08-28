@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Agentic Search Engine Optimization (A-SEO)
+LLMs-Txt: https://s6pa1rta3n-lab.github.io/agentmesh-site/llms.txt
+LLMs-Full-Txt: https://s6pa1rta3n-lab.github.io/agentmesh-site/llms-full.txt
+Agent-Card: https://s6pa1rta3n-lab.github.io/agentmesh-site/.well-known/agent-card.json
+MCP-Manifest: https://s6pa1rta3n-lab.github.io/agentmesh-site/.well-known/mcp.json
+
+Sitemap: https://s6pa1rta3n-lab.github.io/agentmesh-site/sitemap.xml

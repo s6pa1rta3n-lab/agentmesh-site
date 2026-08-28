@@ -1,0 +1,25 @@
+# AgentMesh
+
+> The Microservice Runtime Mesh for AI Coding Agents.
+
+AgentMesh is a high-performance suite of 7 standalone Rust and Go microservices exposed over the Model Context Protocol (MCP 2024-11-05+) and gRPC/HTTP. It offloads deterministic, heavy computing tasks (AST parsing, sub-second microVM sandboxes, test bisection, syntax patchers, and security audit vaults) from LLMs to specialized local and cloud daemons.
+
+- Website: https://s6pa1rta3n-lab.github.io/agentmesh-site/
+- GitHub Organization: https://github.com/s6pa1rta3n-lab
+- Full Context: https://s6pa1rta3n-lab.github.io/agentmesh-site/llms-full.txt
+- Official Settlement Address (Base L2 USDC): 0xF46C9F6d70C50BF81ef3588AB523a90a594a2F89
+
+## Core Microservices
+
+- [symbol-graph-svc](https://github.com/s6pa1rta3n-lab/symbol-graph-svc): High-throughput Language Server & AST call-graph indexer (<20ms latency SLA). Tools: `find_definition`, `find_references`, `build_call_graph`.
+- [sandbox-pool-svc](https://github.com/s6pa1rta3n-lab/sandbox-pool-svc): 3.4ms Copy-on-Write MicroVM workspace scratchpad & execution runner. Tools: `create_sandbox`, `execute_command`, `snapshot_diff`.
+- [ast-patcher-svc](https://github.com/s6pa1rta3n-lab/ast-patcher-svc): Deterministic Tree-sitter AST code transformer guaranteeing 0 syntax regressions. Tools: `apply_ast_patch`, `rename_symbol`, `validate_syntax`.
+- [test-oracle-svc](https://github.com/s6pa1rta3n-lab/test-oracle-svc): Dynamic test impact analyzer and automated git commit bisection engine. Tools: `analyze_impact`, `run_bisect`, `detect_flakiness`.
+- [episodic-memory-svc](https://github.com/s6pa1rta3n-lab/episodic-memory-svc): Persistent cross-session knowledge graph and hybrid vector memory store. Tools: `store_episode`, `query_memory`, `graph_query`.
+- [visual-eval-svc](https://github.com/s6pa1rta3n-lab/visual-eval-svc): Headless Playwright browser visual layout inspector, pixel-diffing & WCAG a11y oracle. Tools: `render_page`, `diff_snapshots`, `check_a11y`.
+- [safety-broker-svc](https://github.com/s6pa1rta3n-lab/safety-broker-svc): Deny-by-default policy enforcement, secret vault proxying, and SHA-256 Merkle audit logs. Tools: `evaluate_action`, `get_credential`, `verify_victory`.
+
+## Integration & Quickstart
+
+- [MCP Manifest Bundle](https://s6pa1rta3n-lab.github.io/agentmesh-site/registry/mcp.json): Universal MCP server JSON configuration for Cursor, Windsurf, Claude Desktop, and Antigravity SDK.
+- [Agent-to-Agent Manifest (agent-card.json)](https://s6pa1rta3n-lab.github.io/agentmesh-site/registry/agent-card.json): A2A machine-readable discovery manifest with x402 metered rates and on-chain settlement details.
